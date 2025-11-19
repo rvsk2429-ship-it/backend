@@ -3,3 +3,6 @@ dist/
 .env
 .env.save*
 *.log
+.env*
+node_modules/
+dist/
