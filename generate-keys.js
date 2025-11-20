@@ -1,16 +1,23 @@
 #!/usr/bin/env node
 
 /**
- * Security Key Generator
- * Generates all required security keys for the environment
- * 
- * Usage: node generate-keys.js
+ * Security Key Generator (SAFE VERSION)
+ * Usage:
+ *   node generate-keys.js "<ADMIN_PASSWORD>"
  */
 
 import crypto from "crypto";
 import bcryptjs from "bcryptjs";
 
-console.log("\n🔐 Security Key Generator\n");
+// Validate password argument
+const adminPassword = process.argv[2];
+if (!adminPassword) {
+  console.error("❌ ERROR: Provide admin password as argument");
+  console.error('Usage: node generate-keys.js "MyStrongPassword123!@"');
+  process.exit(1);
+}
+
+console.log("\n🔐 Security Key Generator (Safe Version)\n");
 console.log("=".repeat(60));
 
 // Generate JWT Secret
@@ -28,8 +35,6 @@ const encryptionIV = crypto.randomBytes(16).toString("hex");
 console.log("\n3️⃣  ENCRYPTION_IV (16 bytes):");
 console.log(`   ${encryptionIV}`);
 
-// Generate Admin Password Hash
-const adminPassword = "19@HarHarMahaDev@19@19@*";
 const saltRounds = 10;
 
 bcryptjs.hash(adminPassword, saltRounds, (err, hash) => {
@@ -38,11 +43,9 @@ bcryptjs.hash(adminPassword, saltRounds, (err, hash) => {
     process.exit(1);
   }
 
-  console.log("\n4️⃣  ADMIN_PASSWORD_HASH (password: 19@HarHarMahaDev@19@19@*):");
+  console.log("\n4️⃣  ADMIN_PASSWORD_HASH:");
   console.log(`   ${hash}`);
-
   console.log("\n" + "=".repeat(60));
-  console.log("\n📋 Copy this to your .env file:\n");
 
   const envContent = `# ===== Security Keys (Generated) =====
 JWT_SECRET=${jwtSecret}
@@ -51,8 +54,8 @@ ENCRYPTION_IV=${encryptionIV}
 ADMIN_PASSWORD_HASH=${hash}
 
 # ===== Other Required Variables =====
-MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/rinku
-ADMIN_EMAIL=owner@rinku-beauty.com
+MONGODB_URI=
+ADMIN_EMAIL=
 ALLOWED_IPS=127.0.0.1,localhost
 ENABLE_IP_WHITELIST=false
 PORT=5000
@@ -61,12 +64,9 @@ NODE_ENV=development
 LOG_LEVEL=debug
 `;
 
+  console.log("\n📋 Copy this to your .env file:\n");
   console.log(envContent);
 
   console.log("=".repeat(60));
   console.log("✅ Keys generated successfully!\n");
-  console.log("Next steps:");
-  console.log("1. Create or update .env file with the values above");
-  console.log("2. Run: npm install");
-  console.log("3. Run: npm run dev\n");
 });
