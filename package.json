@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --watch src --exec \"node --loader ts-node/esm src/index.ts\"",
-    "start": "node index.cjs",
-    "build": "tsc -p tsconfig.json"
+    "start": "node dist/index.js",
+    "build": "tsc"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
